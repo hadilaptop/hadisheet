@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4 # تغییر به v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install NPM Dependencies
         run: npm install
@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-java@v4 # تغییر به v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'
 
       - name: Sync Capacitor
         run: npx cap sync android
@@ -44,5 +44,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4 # تغییر به v4
         with:
-          name: app-release-unsigned
-          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
+          name: app-release-hadisheet
+          path: android/app/build/outputs/apk/release/app-release-hadisheet.apk
