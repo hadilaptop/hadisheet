@@ -27,7 +27,7 @@ jobs:
         run: npm run build
 
       - name: Setup Java JDK
-        uses: actions/setup-java@v5 # ارتقا به نسخه ۵ برای رفع اخطار
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '21'
@@ -41,8 +41,13 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleRelease
 
+      - name: Rename APK to Hadisheet
+        run: |
+          # پیدا کردن هر فایل apk در پوشه ریلیز و تغییر نام آن به Hadisheet.apk
+          mv android/app/build/outputs/apk/release/*.apk android/app/build/outputs/apk/release/Hadisheet.apk
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
-          path: android/app/build/outputs/apk/release/*.apk # استفاده از ستاره برای گرفتن هر نام فایلی که خروجی داده شود
+          name: Hadisheet
+          path: android/app/build/outputs/apk/release/Hadisheet.apk
