@@ -1,0 +1,48 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # این خط اجازه می‌دهد اکشن را به صورت دستی هم اجرا کنید
+
+jobs:
+  build:
+    name: Build Release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # نسخه نود متناسب با پروژه شما
+
+      - name: Install NPM Dependencies
+        run: npm install
+
+      - name: Build Web Assets
+        run: npm run build # این دستور باید با اسکریپت بیلد Vite در package.json شما همخوانی داشته باشد
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17' # نسخه جاوای مورد نیاز برای گریدل‌های جدید
+
+      - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Build Android Release APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release-unsigned
+          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
