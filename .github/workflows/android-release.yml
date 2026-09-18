@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # این خط اجازه می‌دهد اکشن را به صورت دستی هم اجرا کنید
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,24 +13,24 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # تغییر به v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4 # تغییر به v4
         with:
-          node-version: '20' # نسخه نود متناسب با پروژه شما
+          node-version: '20'
 
       - name: Install NPM Dependencies
         run: npm install
 
       - name: Build Web Assets
-        run: npm run build # این دستور باید با اسکریپت بیلد Vite در package.json شما همخوانی داشته باشد
+        run: npm run build
 
       - name: Setup Java JDK
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4 # تغییر به v4
         with:
           distribution: 'zulu'
-          java-version: '17' # نسخه جاوای مورد نیاز برای گریدل‌های جدید
+          java-version: '17'
 
       - name: Sync Capacitor
         run: npx cap sync android
@@ -42,7 +42,7 @@ jobs:
           ./gradlew assembleRelease
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4 # تغییر به v4
         with:
           name: app-release-unsigned
           path: android/app/build/outputs/apk/release/app-release-unsigned.apk
