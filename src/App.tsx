@@ -12,33 +12,36 @@ import { Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
 export default function App() {
-  const { isInitialized, initDb } = useStore();
+  // ۳. استفاده از سلکتور به جای کل استور جهت جلوگیری از رندرهای مجدد
+  const isInitialized = useStore((state) => state.isInitialized);
+  const initDb = useStore((state) => state.initDb);
   const [currentView, setCurrentView] = useState<'home' | 'detail' | 'settings'>('home');
 
+  // ۱. اتصال غیرهمگام در پس‌زمینه
   useEffect(() => {
     initDb();
   }, [initDb]);
 
   if (!isInitialized) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50" dir="rtl">
-        <Loader2 className="animate-spin text-amber-500 mb-4" size={40} />
-        <p className="text-slate-500 font-medium font-sans">در حال راه‌اندازی پایگاه داده...</p>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 font-sans" dir="rtl">
+        <Loader2 className="animate-spin text-amber-500 mb-3" size={36} />
+        <p className="text-slate-500 text-sm font-medium">در حال راه‌اندازی نرم‌افزار...</p>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-[100dvh] bg-black overflow-hidden font-sans">
-      <AnimatePresence>
+    <div className="relative w-full h-[100dvh] bg-slate-900 overflow-hidden font-sans">
+      <AnimatePresence mode="wait">
         {currentView === 'home' && (
           <motion.div
             key="home"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute inset-0 overflow-y-auto bg-slate-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="absolute inset-0 overflow-y-auto bg-slate-50 will-change-transform transform-gpu"
           >
             <CustomerList 
               onSelectCustomer={() => setCurrentView('detail')} 
@@ -53,8 +56,13 @@ export default function App() {
             initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute inset-0 overflow-y-auto bg-slate-50 shadow-2xl"
+            transition={{
+              type: "spring",
+              damping: 30,
+              stiffness: 300,
+              mass: 0.8
+            }}
+            className="absolute inset-0 overflow-y-auto bg-slate-50 shadow-2xl will-change-transform transform-gpu"
           >
             <CustomerDetail onBack={() => setCurrentView('home')} />
           </motion.div>
@@ -66,8 +74,13 @@ export default function App() {
             initial={{ opacity: 0, y: "100%" }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="absolute inset-0 overflow-y-auto bg-slate-50 shadow-2xl"
+            transition={{
+              type: "spring",
+              damping: 30,
+              stiffness: 300,
+              mass: 0.8
+            }}
+            className="absolute inset-0 overflow-y-auto bg-slate-50 shadow-2xl will-change-transform transform-gpu"
           >
             <SheetTypesManager onBack={() => setCurrentView('home')} />
           </motion.div>

@@ -7,19 +7,28 @@ import { ChevronLeft, Settings, User, Search } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export function CustomerList({ onSelectCustomer, onOpenSettings }: { onSelectCustomer: (id: string) => void, onOpenSettings: () => void }) {
-  const { customers, addCustomer, setCurrentCustomer } = useStore();
+  // ۳. استفاده از سلکتورهای مجزا به جای useStore() کلی
+  const customers = useStore((state) => state.customers);
+  const addCustomer = useStore((state) => state.addCustomer);
+  const setCurrentCustomer = useStore((state) => state.setCurrentCustomer);
+
   const [isAdding, setIsAdding] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredCustomers = useMemo(() => {
-    return customers.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    if (!searchQuery.trim()) return customers;
+    const query = searchQuery.toLowerCase();
+    return customers.filter(c => c.name.toLowerCase().includes(query));
   }, [customers, searchQuery]);
 
-  const handleAdd = async (e: React.FormEvent) => {
+  const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newCustomerName.trim()) return;
-    await addCustomer(newCustomerName.trim());
+    const name = newCustomerName.trim();
+    if (!name) return;
+
+    // ۴. آپدیت خوش‌بینانه: بلافاصله استیت تغییر می‌کند و فرم بسته می‌شود
+    addCustomer(name);
     setNewCustomerName('');
     setIsAdding(false);
   };

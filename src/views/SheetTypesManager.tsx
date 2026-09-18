@@ -5,13 +5,19 @@ import { Trash2, Layers } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export function SheetTypesManager({ onBack }: { onBack: () => void }) {
-  const { sheetTypes, addSheetType, deleteSheetType } = useStore();
+  // ۳. استفاده از سلکتورهای مشخص برای جلوگیری از Re-render کامپوننت
+  const sheetTypes = useStore((state) => state.sheetTypes);
+  const addSheetType = useStore((state) => state.addSheetType);
+  const deleteSheetType = useStore((state) => state.deleteSheetType);
   const [newName, setNewName] = useState('');
 
-  const handleAdd = async (e: React.FormEvent) => {
+  const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newName.trim()) return;
-    await addSheetType(newName.trim());
+    const name = newName.trim();
+    if (!name) return;
+
+    // ۴. ثبت خوش‌بینانه و فوری در رابط کاربری
+    addSheetType(name);
     setNewName('');
   };
 

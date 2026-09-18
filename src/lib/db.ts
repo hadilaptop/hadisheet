@@ -111,8 +111,8 @@ export const dbService = {
     return customers.sort((a, b) => a.name.localeCompare(b.name));
   },
 
-  async addCustomer(name: string): Promise<Customer> {
-    const id = uuidv4();
+  async addCustomer(name: string, customId?: string): Promise<Customer> {
+    const id = customId || uuidv4();
     const customer = { id, name };
     if (Capacitor.isNativePlatform() && sqliteDb) {
       await sqliteDb.run('INSERT INTO customers (id, name) VALUES (?, ?)', [id, name]);
@@ -132,8 +132,8 @@ export const dbService = {
     return types.sort((a, b) => a.name.localeCompare(b.name));
   },
 
-  async addSheetType(name: string): Promise<SheetType> {
-    const id = uuidv4();
+  async addSheetType(name: string, customId?: string): Promise<SheetType> {
+    const id = customId || uuidv4();
     const type = { id, name };
     if (Capacitor.isNativePlatform() && sqliteDb) {
       await sqliteDb.run('INSERT INTO sheet_types (id, name) VALUES (?, ?)', [id, name]);
@@ -172,9 +172,9 @@ export const dbService = {
     return items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   },
 
-  async addWorkItem(item: Omit<WorkItem, 'id'>): Promise<WorkItem> {
-    const id = uuidv4();
-    const workItem = { ...item, id };
+  async addWorkItem(item: WorkItem | Omit<WorkItem, 'id'>): Promise<WorkItem> {
+    const id = 'id' in item && item.id ? item.id : uuidv4();
+    const workItem: WorkItem = { ...item, id };
     if (Capacitor.isNativePlatform() && sqliteDb) {
       await sqliteDb.run(
         'INSERT INTO work_items (id, customerId, date, name, sheetTypeId, length, width, price, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',

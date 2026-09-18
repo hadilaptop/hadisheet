@@ -8,7 +8,14 @@ import { Trash2, FileText, Ruler, Calendar, AlignRight } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export function CustomerDetail({ onBack }: { onBack: () => void }) {
-  const { currentCustomer, workItems, loadWorkItems, sheetTypes, addWorkItem, deleteWorkItem } = useStore();
+  // ۳. استفاده از سلکتورهای مجزا جهت جلوگیری از رندرهای اضافی
+  const currentCustomer = useStore((state) => state.currentCustomer);
+  const workItems = useStore((state) => state.workItems);
+  const loadWorkItems = useStore((state) => state.loadWorkItems);
+  const sheetTypes = useStore((state) => state.sheetTypes);
+  const addWorkItem = useStore((state) => state.addWorkItem);
+  const deleteWorkItem = useStore((state) => state.deleteWorkItem);
+
   const [isAdding, setIsAdding] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -22,21 +29,22 @@ export function CustomerDetail({ onBack }: { onBack: () => void }) {
   });
 
   useEffect(() => {
-    if (currentCustomer) {
+    if (currentCustomer?.id) {
       loadWorkItems(currentCustomer.id);
     }
-  }, [currentCustomer, loadWorkItems]);
+  }, [currentCustomer?.id, loadWorkItems]);
 
   if (!currentCustomer) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.sheetTypeId) return;
+    if (!formData.name.trim() || !formData.sheetTypeId) return;
     
-    await addWorkItem({
+    // ۴. اعمال فوری در رابط کاربری بدون منتظر ماندن برای ذخیره در دیتابیس
+    addWorkItem({
       customerId: currentCustomer.id,
       date: formData.date,
-      name: formData.name,
+      name: formData.name.trim(),
       sheetTypeId: formData.sheetTypeId,
       length: parseFloat(formData.length) || 0,
       width: parseFloat(formData.width) || 0,
