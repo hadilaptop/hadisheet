@@ -35,19 +35,26 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Build Android Debug APK
+      - name: Decode Keystore File
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release.keystore
+
+      - name: Build Android Release APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=release.keystore \
+            -Pandroid.injected.signing.store.password="${{ secrets.RELEASE_KEYSTORE_PASSWORD }}" \
+            -Pandroid.injected.signing.key.alias="${{ secrets.RELEASE_KEY_ALIAS }}" \
+            -Pandroid.injected.signing.key.password="${{ secrets.RELEASE_KEY_PASSWORD }}"
 
       - name: Rename APK to Hadisheet
         run: |
-          # تغییر مسیرها به پوشه debug
-          mv android/app/build/outputs/apk/debug/*.apk android/app/build/outputs/apk/debug/Hadisheet.apk
+          mv android/app/build/outputs/apk/release/*.apk android/app/build/outputs/apk/release/Hadisheet.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Hadisheet
-          path: android/app/build/outputs/apk/debug/Hadisheet.apk
+          name: Hadisheet-Release
+          path: android/app/build/outputs/apk/release/Hadisheet.apk
