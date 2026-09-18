@@ -1,11 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  html, body {
-    direction: rtl;
-    text-align: right;
-    background-color: #f8fafc; /* یک رنگ پس‌زمینه ملایم و مدرن */
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
   }
 }

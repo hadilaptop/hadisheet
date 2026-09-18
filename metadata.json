@@ -1,0 +1,6 @@
+{
+  "name": "Workshop Manager",
+  "description": "A workshop management application for tracking customers and work items.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
